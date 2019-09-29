@@ -7,12 +7,12 @@ from .models import Contact
 
 # Create your views here.
 
-class ContactsApi(APIView):
+class ContactApi(APIView):
     '''
     The Docs go here
     '''
 
     def get(self, request):
-        queryset = Venue.get.all()
+        #queryset = Venue.get.all()
         data = {'phone': '07123456789'}
         return Response(data)
