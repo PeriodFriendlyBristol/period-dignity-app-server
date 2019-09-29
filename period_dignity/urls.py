@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.urls import path
 
 from venue import views as venue_views
+from contact import views as contact_views
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/venue/', venue_views.VenueApi.as_view()),
+    path('api/contact/', contact_views.ContactApi.as_view()),
 ]
