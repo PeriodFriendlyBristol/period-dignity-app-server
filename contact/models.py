@@ -4,5 +4,5 @@ from django.db import models
 
 class Contact(models.Model):
 
-    name = models.CharField(max_length=80, default='Default')
-
+    phone = models.CharField(max_length=15)
+    email = models.CharField(max_length=250)
