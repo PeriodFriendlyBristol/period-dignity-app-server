@@ -24,7 +24,7 @@ class SocialMedia(models.Model):
 
 class Venue(models.Model):
 
-    name = models.CharField(max_length=80, default='Default')
+    name = models.CharField(max_length=80)
     description = models.CharField(max_length=250)
     address_line_1 = models.CharField(max_length=250)
     address_line_2 = models.CharField(max_length=250)
