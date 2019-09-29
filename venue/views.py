@@ -12,6 +12,6 @@ class VenueApi(APIView):
     the venue APi docs go here 
     '''
     def get(self, request):
-        queryset = Venue.get.all()
+        #queryset = Venue.get.all()
         data = {'location': 'BTP'}
         return Response(data)
