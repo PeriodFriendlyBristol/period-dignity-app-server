@@ -33,7 +33,8 @@ class Venue(models.Model):
     city = models.CharField(max_length=250)
     postcode = models.CharField(max_length=10)
     country = models.CharField(max_length=250)
-    contact = models.ForeignKey(Contact, on_delete=models.DO_NOTHING)
+    
+    contacts = models.ManyToManyField(Contact)
 
     product_location = models.CharField(max_length=500)
     business_type = models.ForeignKey(BusinessType, on_delete=models.PROTECT)
