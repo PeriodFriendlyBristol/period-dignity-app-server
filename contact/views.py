@@ -1,9 +1,6 @@
-
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from .models import Contact
-
+from contact.models import Contact
 
 # Create your views here.
 
