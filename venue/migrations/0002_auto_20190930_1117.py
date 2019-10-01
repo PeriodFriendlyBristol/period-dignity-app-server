@@ -48,18 +48,16 @@ def import_csv_data(apps, schema_editor):
     # Dictionary to hold unique social media objects.
     social_media_lookup = {}
 
-
     def try_date_from_string(string):
-        if len(string) > 0:
-            return date_from_string(string)
+        parts = string.split(":")
+        if len(string) > 0 and len(parts) == 2:
+            try:
+                return datetime.time(int(parts[0]), int(parts[1]))
+            except ValueError:
+                print("Error parsing string: ", string, " to int")
+                return None
         else:
             return None
-
-
-    def date_from_string(string):
-        parts = string.split(":")
-        return datetime.time(int(parts[0]), int(parts[1]))
-
 
     def get_social_media_object(website, twitter, facebook):
         social_media_hash = website + twitter + facebook
@@ -70,7 +68,6 @@ def import_csv_data(apps, schema_editor):
             return social_media
         else:
             return social_media_lookup[social_media_hash]
-
 
     with open('/code/server/venue/initial_venue_data.csv') as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter=',')
@@ -124,24 +121,22 @@ def import_csv_data(apps, schema_editor):
 
             venue = Venue(name=row['NAME'], description=row['DESCRIPTION'], address_line_1=row['ADDRESS1'],
                           address_line_2=row['ADDRESS2'], address_line_3=row['ADDRESS3'], city=row['CITY'],
-                          postcode=row['POSTCODE'], country=row['COUNTRY'], latitude=Decimal(row['LAT']), 
-                          longitude=Decimal(row['LNG']),  product_location=row['PRODUCT_LOCATION'],
+                          postcode=row['POSTCODE'], country=row['COUNTRY'], latitude=Decimal(row['LAT']),
+                          longitude=Decimal(row['LNG']), product_location=row['PRODUCT_LOCATION'],
                           venue_status=venue_status, business_type=business_type, toilet=toilet,
                           social_media=social_media, wheelchair_access=wheelchair_access, stock=stock,
-                          opening_hours=opening_hours, monday_open=mon_open, monday_close=mon_close, 
-                          tuesday_open=tue_open, tuesday_close=tue_close, wednesday_open=wed_open, 
+                          opening_hours=opening_hours, monday_open=mon_open, monday_close=mon_close,
+                          tuesday_open=tue_open, tuesday_close=tue_close, wednesday_open=wed_open,
                           wednesday_close=wed_close, thursday_open=thu_open, thursday_close=thu_close,
                           friday_open=fri_open, friday_close=fri_close, saturday_open=sat_open,
                           saturday_close=sat_close, sunday_open=sun_open, sunday_close=sun_close)
             venue.save()
-            
+
             venue.contacts.set([contact1, contact2])
             venue.save()
 
 
-
 class Migration(migrations.Migration):
-
     dependencies = [
         ('venue', '0001_initial'),
         ('contact', '0001_initial'),
