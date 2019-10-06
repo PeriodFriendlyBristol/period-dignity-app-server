@@ -1,3 +1,9 @@
+'''
+Venue Serializer Module.
+
+Docs https://www.django-rest-framework.org/api-guide/serializers/#modelserializer
+'''
+
 from rest_framework import serializers
 
 from .models import Venue, SocialMedia, VenueStatus, BusinessType
