@@ -1,8 +1,10 @@
+set -e
 
 sleep 3
 
-python server/manage.py makemigrations venue
-python server/manage.py makemigrations contact
-python server/manage.py migrate
+python3 server/manage.py migrate
 
-python server/manage.py runserver 0.0.0.0:8000
+# TODO admin user must be made manually in production
+python3 server/manage.py shell < server/tools/create_admin.py
+
+python3 server/manage.py runserver 0.0.0.0:8000
