@@ -20,8 +20,8 @@ class VenueApi(APIView):
         '''
         the GET method endpoint for /api/venue
         '''
-        _ = request
-        #url_params = request
+        url_params = request.GET
+        print(url_params)
 
         queryset = Venue.objects.all()
         serializer = VenueSerializer(queryset, many=True)
