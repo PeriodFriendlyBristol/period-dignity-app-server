@@ -31,9 +31,6 @@ def import_csv_data(apps, schema_editor):
             label=label, description=description)
         business_type_object_lookup[label].save()
 
-    # Dictionary to hold unique social media objects.
-    social_media_lookup = {}
-
     def try_date_from_string(string):
         parts = string.split(":")
         if len(string) > 0 and len(parts) == 2:
@@ -50,26 +47,10 @@ def import_csv_data(apps, schema_editor):
 
         for row in csv_reader:
             # Parse the opening times into datetime objects.
-            opening_hours = row['OPENING_HOURS'] == 'True'
-            if opening_hours:
-            else:
-                mon_open = None
-                mon_close = None
-                tue_open = None
-                tue_close = None
-                wed_open = None
-                wed_close = None
-                thu_open = None
-                thu_close = None
-                fri_open = None
-                fri_close = None
-                sat_open = None
-                sat_close = None
-                sun_open = None
-                sun_close = None
 
             venue = Venue.ccreate()
             venue.name = row['NAME']
+
             venue.description = row['DESCRIPTION']
             venue.address_line_1 = row['ADDRESS1']
             venue.address_line_2 = row['ADDRESS2']
@@ -79,17 +60,21 @@ def import_csv_data(apps, schema_editor):
             venue.country = row['COUNTRY']
             # venue.latitude=Decimal(row['LAT'])
             # venue.longitude=Decimal(row['LNG'])
+
             venue.phone = row['PHONE_PRIMARY']
             venue.email = row['EMAIL_PRIMARY']
             venue.website = row['WEBSITE']
             venue.twitter = row['TWITTER']
             venue.facebook = row['FACEBOOK']
-            venue.product_location = row['PRODUCT_LOCATION']
+
             venue.business_type = business_type_object_lookup[row['BUSINESS_TYPE']]
             venue.toilet = row['TOILET'] == 'True'
             venue.wheelchair_access = row['WHEELCHAIR_ACCESS'] == 'True'
+
+            venue.product_location = row['PRODUCT_LOCATION']
             venue.stock = row['STOCK'] == 'True'
-            venue.opening_hours = opening_hours
+
+            venue.opening_hours = row['OPENING_HOURS'] == 'True'
             venue.monday_open = mon_open
             venue.monday_close = mon_close
             venue.tuesday_open = tue_open

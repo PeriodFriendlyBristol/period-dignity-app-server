@@ -6,20 +6,7 @@ Docs https://www.django-rest-framework.org/api-guide/serializers/#modelserialize
 
 from rest_framework import serializers
 
-from .models import Venue, SocialMedia, VenueStatus, BusinessType
-
-
-class SocialMediaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SocialMedia
-        fields = '__all__'
-
-
-class VenueStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = VenueStatus
-        fields = '__all__'
-
+from .models import Venue, BusinessType
 
 class BusinessTypeSerializer(serializers.ModelSerializer):
     class Meta:

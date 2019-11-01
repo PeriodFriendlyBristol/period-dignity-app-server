@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django_filters',
 
     'venue.apps.VenueConfig',
-    'contact.apps.ContactConfig',
 ]
 
 MIDDLEWARE = [
