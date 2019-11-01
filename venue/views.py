@@ -1,8 +1,10 @@
 '''
 Venue Views Module
 '''
-from rest_framework.response import Response
-from rest_framework.views import APIView
+
+from rest_framework.generics import ListAPIView
+from django_filters import rest_framework as filters
+
 
 from .models import Venue
 from .serializers import VenueSerializer
@@ -11,18 +13,34 @@ from .serializers import VenueSerializer
 # pylint:disable=no-member
 
 
-class VenueApi(APIView):
+class VenueFilter(filters.FilterSet):
+    class Meta:
+        model = Venue
+        fields = {
+            'name': ['lt', 'gt'],
+        }
+
+
+class VenueApi(ListAPIView):
     '''
-    the venue API docs go here 
+    # URL params
+    `limit=5` 
+    `offset=2`
+
+
     '''
 
-    def get(self, request):
-        '''
-        the GET method endpoint for /api/venue
-        '''
-        url_params = request.GET
-        print(url_params)
+    serializer_class = VenueSerializer
 
+    def get_queryset(self):
         queryset = Venue.objects.all()
-        serializer = VenueSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return queryset
+
+    # def get(self, request):
+    #    '''
+    #    the GET method endpoint for /api/venue
+    #    '''
+    #    url_params = request.GET
+    #    print(url_params)
+
+    #    return Response(serializer.data)
