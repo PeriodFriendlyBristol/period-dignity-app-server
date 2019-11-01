@@ -48,7 +48,7 @@ def import_csv_data(apps, schema_editor):
         for row in csv_reader:
             # Parse the opening times into datetime objects.
 
-            venue = Venue.ccreate()
+            venue = Venue.create()
             venue.name = row['NAME']
 
             venue.description = row['DESCRIPTION']
