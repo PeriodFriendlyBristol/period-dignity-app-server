@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'rest_framework',
-    'django_filters',
     'corsheaders',
 
     'venue.apps.VenueConfig',
@@ -91,7 +90,7 @@ WSGI_APPLICATION = 'period_dignity.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'perioddignitydb',
         'USER': 'friendly',
         'PASSWORD': 'Pa55word',

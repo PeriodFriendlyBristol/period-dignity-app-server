@@ -6,7 +6,7 @@ COPY requirements.txt /code/
 RUN pip install --upgrade pip &&\
     pip install -r requirements.txt &&\
     apt-get update &&\
-    apt-get install binutils libproj-dev gdal-bin -y
+    apt-get install binutils libproj-dev gdal-bin netcat -y
 COPY . /code/
 RUN pip install -r requirements.txt
 CMD bash /code/run.sh
