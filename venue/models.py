@@ -22,6 +22,7 @@ class Venue(models.Model):
     city = models.CharField(max_length=250)
     postcode = models.CharField(max_length=10)
     country = models.CharField(max_length=250)
+    location = 
     latitude = models.DecimalField(max_digits=10, decimal_places=7)
     longitude = models.DecimalField(max_digits=10, decimal_places=7)
 

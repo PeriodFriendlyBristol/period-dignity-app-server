@@ -42,53 +42,59 @@ def import_csv_data(apps, schema_editor):
         else:
             return None
 
+    def timestr(string):
+        if string:
+            return string
+        return None
+
     with open('/code/server/venue/initial_venue_data.csv') as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter=',')
 
         for row in csv_reader:
             # Parse the opening times into datetime objects.
+            print(row)
+            venue = Venue.objects.create(
+                name=row['NAME'],
 
-            venue = Venue.create()
-            venue.name = row['NAME']
+                description=row['DESCRIPTION'],
+                address_line_1=row['ADDRESS1'],
+                address_line_2=row['ADDRESS2'],
+                address_line_3=row['ADDRESS3'],
+                city=row['CITY'],
+                postcode=row['POSTCODE'],
+                country=row['COUNTRY'],
+                # latitude=Decimal(row['LAT']),
+                # longitude=Decimal(row['LNG']),
 
-            venue.description = row['DESCRIPTION']
-            venue.address_line_1 = row['ADDRESS1']
-            venue.address_line_2 = row['ADDRESS2']
-            venue.address_line_3 = row['ADDRESS3']
-            venue.city = row['CITY']
-            venue.postcode = row['POSTCODE']
-            venue.country = row['COUNTRY']
-            # venue.latitude=Decimal(row['LAT'])
-            # venue.longitude=Decimal(row['LNG'])
+                phone=row['PHONE_PRIMARY'],
+                email=row['EMAIL_PRIMARY'],
+                website=row['WEBSITE'],
+                twitter=row['TWITTER'],
+                facebook=row['FACEBOOK'],
 
-            venue.phone = row['PHONE_PRIMARY']
-            venue.email = row['EMAIL_PRIMARY']
-            venue.website = row['WEBSITE']
-            venue.twitter = row['TWITTER']
-            venue.facebook = row['FACEBOOK']
+                business_type=business_type_object_lookup[row['BUSINESS_TYPE']],
+                toilet=row['TOILET'] == 'True',
+                wheelchair_access=row['WHEELCHAIR_ACCESS'] == 'True',
 
-            venue.business_type = business_type_object_lookup[row['BUSINESS_TYPE']]
-            venue.toilet = row['TOILET'] == 'True'
-            venue.wheelchair_access = row['WHEELCHAIR_ACCESS'] == 'True'
+                product_location=row['PRODUCT_LOCATION'],
+                stock=row['STOCK'] == 'True',
 
-            venue.product_location = row['PRODUCT_LOCATION']
-            venue.stock = row['STOCK'] == 'True'
-
-            venue.opening_hours = row['OPENING_HOURS'] == 'True'
-            venue.monday_open = mon_open
-            venue.monday_close = mon_close
-            venue.tuesday_open = tue_open
-            venue.tuesday_close = tue_close
-            venue.wednesday_open = wed_open
-            venue.wednesday_close = wed_close
-            venue.thursday_open = thu_open
-            venue.thursday_close = thu_close
-            venue.friday_open = fri_open
-            venue.friday_close = fri_close
-            venue.saturday_open = sat_open
-            venue.saturday_close = sat_close
-            venue.sunday_open = sun_open
-            venue.sunday_close = sun_close
+                opening_hours=row['OPENING_HOURS'] == 'True',
+                monday_open=timestr(row['MON_OPEN']),
+                monday_close=timestr(row['MON_CLOSE']),
+                tuesday_open=timestr(row['TUE_OPEN']),
+                tuesday_close=timestr(row['TUE_CLOSE']),
+                wednesday_open=timestr(row['WED_OPEN']),
+                wednesday_close=timestr(row['WED_CLOSE']),
+                thursday_open=timestr(row['THU_OPEN']),
+                thursday_close=timestr(row['THU_CLOSE']),
+                friday_open=timestr(row['FRI_OPEN']),
+                friday_close=timestr(row['FRI_CLOSE']),
+                saturday_open=timestr(row['SAT_OPEN']),
+                saturday_close=timestr(row['SAT_CLOSE']),
+                sunday_open=timestr(row['SUN_OPEN']),
+                sunday_close=timestr(row['SUN_CLOSE']),
+            )
             venue.save()
 
 
