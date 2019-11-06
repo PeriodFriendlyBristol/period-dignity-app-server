@@ -69,7 +69,7 @@ def import_csv_data(apps, schema_editor):
         else:
             return social_media_lookup[social_media_hash]
 
-    with open('/code/server/venue/initial_venue_data.csv') as csv_file:
+    with open('/code/venue/initial_venue_data.csv') as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter=',')
 
         for row in csv_reader:
