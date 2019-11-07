@@ -19,7 +19,11 @@ class VenueApi(APIView):
     # URL params
     `limit=20`
     `offset=1`
+    `type=['Community Centre', 'Public Toilet', 'Other', 'Youth Club', 'Foodbank', 'Library', 'Health Centre', 'GP']`
     '''
+
+    # Define the known venue types.
+    business_type = ['Community Centre', 'Public Toilet', 'Other', 'Youth Club', 'Foodbank', 'Library', 'Health Centre', 'GP']
 
     def get(self, request):
         '''
@@ -29,9 +33,17 @@ class VenueApi(APIView):
         print(request.GET)
         limit = request.GET.get('limit', 20)
         offset = request.GET.get('offset', 1)
+        business_type = request.GET.get('business_type', None)
 
-        # Query for the venues.
-        queryset = Venue.objects.all()
+        # Filter the results.
+        filtered = False
+        if business_type and business_type in self.business_type:
+            queryset = Venue.objects.filter(business_type__label=business_type)
+            filtered = True
+
+        # Query for all venues if there are no filters.
+        if not filtered:
+            queryset = Venue.objects.all()
 
         # Paginate the results.
         paginator = Paginator(queryset, limit)
