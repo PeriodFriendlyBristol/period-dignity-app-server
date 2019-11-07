@@ -15,6 +15,7 @@ class BusinessTypeSerializer(serializers.ModelSerializer):
 
 
 class VenueSerializer(serializers.ModelSerializer):
+    business_type = BusinessTypeSerializer(read_only=True)
     class Meta:
         model = Venue
         fields = '__all__'
