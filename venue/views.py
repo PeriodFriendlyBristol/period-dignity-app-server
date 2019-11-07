@@ -3,6 +3,7 @@ Venue Views Module
 '''
 
 from rest_framework.response import Response
+from django.core.paginator import Paginator
 from rest_framework.views import APIView
 
 
@@ -16,19 +17,25 @@ from .serializers import VenueSerializer
 class VenueApi(APIView):
     '''
     # URL params
-    `limit=5` 
-    `offset=2`
-
-
+    `limit=20`
+    `offset=1`
     '''
 
     def get(self, request):
         '''
         the GET method endpoint for /api/venue
         '''
-        url_params = request.GET
-        print(url_params)
-        queryset = Venue.objects.all()
-        serializer = VenueSerializer(queryset, many=True)
+        # Get the query parameters.
+        print(request.GET)
+        limit = request.GET.get('limit', 20)
+        offset = request.GET.get('offset', 1)
 
+        # Query for the venues.
+        queryset = Venue.objects.all()
+
+        # Paginate the results.
+        paginator = Paginator(queryset, limit)
+        serializer = VenueSerializer(paginator.page(offset), many=True)
+
+        # Return the results.
         return Response(serializer.data)
