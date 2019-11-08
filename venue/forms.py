@@ -13,3 +13,4 @@ class GetVenueForm(Form):
     search_radius = IntegerField(validators=[MinValueValidator(1)])
     coordinates = CharField(validators=[validate_coordinates], required=False)
     business_type = CharField(validators=[validate_business_type], required=False)
+    postcode = CharField(required=False)

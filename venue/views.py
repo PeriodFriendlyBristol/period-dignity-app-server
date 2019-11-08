@@ -4,7 +4,7 @@ Venue Views Module
 from django.db.models.expressions import RawSQL
 from django.core.paginator import Paginator
 
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import APIException, ParseError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,6 +13,7 @@ from .forms import GetVenueForm
 from .models import Venue
 
 from math import cos, pi
+import requests
 
 # pylint:disable=no-self-use
 # pylint:disable=no-member
@@ -40,6 +41,15 @@ class VenueApi(APIView):
     coordinates: str
     A string containing latitude & longitude - in that order.
     Example: coordinates=51.4545,-2.5879
+
+    postcode: str
+    A valid UK postcode. This is translated to latitude & longitude via a 3rd party. All validation is done by this external service.
+    Errors will be returned in a 400 Bad Request, with a message in the body's 'detail' attribute.
+    Examples: postcode=BS1 6AE, postcode=bs16ae
+    Error response 1 - invalid postcode syntax:
+    {"detail": "No matching postcode area, postcode district, postcode sector, or unit postcode found."}
+    Error response 1 - correct syntax, no postcode:
+    {"detail": "No matching postcode found."}
 
     business_type: Community Centre | Public Toilet | Other | Youth Club | Foodbank | Library | Health Centre | GP 
     Filter the venues by venue type.
@@ -69,8 +79,28 @@ class VenueApi(APIView):
             queryset = queryset.filter(business_type__label=data["business_type"])
         
         if "coordinates" in data:
+            # Pull coordinates & radius from the query.
             radius = int(data["search_radius"])
             lat, lng = map(float, data["coordinates"].split(","))
+            queryset = get_nearby_venues(lat, lng, radius)
+        
+        elif "postcode" in data:
+            # Pull postcode from the query and find the coordinates.
+            response = requests.get(f"http://api.getthedata.com/postcode/{data['postcode']}").json()
+            if "error" in response:
+                raise ParseError(response["error"])
+            
+            # Ensure the response has the necessary data.
+            if "data" not in response:
+                raise APIException("Key 'data' missing from postcode lookup API")
+            for key in ["latitude", "longitude"]:
+                if key not in response["data"]:
+                    raise APIException(f"Key 'data.{key}' missing from postcode lookup API")
+            
+            # Pull coordinates from the response.
+            radius = int(data["search_radius"])
+            lat = float(response["data"]["latitude"])
+            lng = float(response["data"]["longitude"])
             queryset = get_nearby_venues(lat, lng, radius)
 
         # Paginate the results.
@@ -81,9 +111,6 @@ class VenueApi(APIView):
 
         # Return the results.
         return Response(serializer.data)
-
-def meters_to_degrees(meters, latitude):
-    return meters / (111.32 * 1000 * cos(latitude * (pi / 180)))
 
 def get_nearby_venues(latitude, longitude, radius):
     """
