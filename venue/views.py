@@ -40,11 +40,13 @@ class VenueApi(APIView):
 
     coordinates: str
     A string containing latitude & longitude - in that order.
+    The venues in the response are sorted by distance from the coordinate.
     Example: coordinates=51.4545,-2.5879
 
     postcode: str
     A valid UK postcode. This is translated to latitude & longitude via a 3rd party. All validation is done by this external service.
     Errors will be returned in a 400 Bad Request, with a message in the body's 'detail' attribute.
+    The venues in the response are sorted by distance from the coordinate.
     Examples: postcode=BS1 6AE, postcode=bs16ae
     Error response 1 - invalid postcode syntax:
     {"detail": "No matching postcode area, postcode district, postcode sector, or unit postcode found."}
