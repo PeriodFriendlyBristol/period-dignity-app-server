@@ -10,4 +10,4 @@ class GetVenueForm(Form):
 
     limit = IntegerField(validators=[MinValueValidator(1)])
     offset = IntegerField(validators=[MinValueValidator(1)])
-    business_type = CharField(validators=[validate_business_type])
+    business_type = CharField(validators=[validate_business_type], required=False)
