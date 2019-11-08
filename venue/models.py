@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.gis.db import models as geo_models
 
 # Create your models here.
 
@@ -23,7 +22,8 @@ class Venue(models.Model):
     city = models.CharField(max_length=250)
     postcode = models.CharField(max_length=10)
     country = models.CharField(max_length=250)
-    location = geo_models.PointField()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
 
     website = models.CharField(max_length=250, null=True)
     facebook = models.CharField(max_length=250, null=True)

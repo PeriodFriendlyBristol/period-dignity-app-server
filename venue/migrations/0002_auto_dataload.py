@@ -4,7 +4,6 @@ from decimal import Decimal
 
 import csv
 from django.db import migrations
-from django.contrib.gis.geos import Point
 
 
 def import_csv_data(apps, schema_editor):
@@ -63,7 +62,8 @@ def import_csv_data(apps, schema_editor):
                 city=row['CITY'],
                 postcode=row['POSTCODE'],
                 country=row['COUNTRY'],
-                location=Point(float(row['LAT']), float(row['LNG'])),
+                latitude=float(row['LAT']), 
+                longitude=float(row['LNG']),
 
                 phone=row['PHONE_PRIMARY'],
                 email=row['EMAIL_PRIMARY'],
