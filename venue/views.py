@@ -1,8 +1,13 @@
 '''
 Venue Views Module
 '''
+import requests
+
 from django.db.models.expressions import RawSQL
 from django.core.paginator import Paginator
+from django.contrib.gis.geos import Point
+from django.contrib.gis.measure import Distance
+
 
 from rest_framework.exceptions import APIException, ParseError
 from rest_framework.response import Response
@@ -12,8 +17,6 @@ from .serializers import VenueSerializer
 from .forms import GetVenueForm
 from .models import Venue
 
-from math import cos, pi
-import requests
 
 # pylint:disable=no-self-use
 # pylint:disable=no-member
@@ -78,32 +81,39 @@ class VenueApi(APIView):
 
         # Filter the results.
         if "business_type" in data:
-            queryset = queryset.filter(business_type__label=data["business_type"])
-        
+            queryset = queryset.filter(
+                business_type__label=data["business_type"])
+
         if "coordinates" in data:
             # Pull coordinates & radius from the query.
-            radius = int(data["search_radius"])
+            radius = float(data["search_radius"])
             lat, lng = map(float, data["coordinates"].split(","))
-            queryset = get_nearby_venues(lat, lng, radius)
-        
+            print(radius)
+            queryset = queryset.filter(
+                location__distance_lt=(Point(lat, lng), Distance(m=radius)))
+
         elif "postcode" in data:
             # Pull postcode from the query and find the coordinates.
-            response = requests.get(f"http://api.getthedata.com/postcode/{data['postcode']}").json()
+            response = requests.get(
+                f"http://api.getthedata.com/postcode/{data['postcode']}").json()
             if "error" in response:
                 raise ParseError(response["error"])
-            
+
             # Ensure the response has the necessary data.
             if "data" not in response:
-                raise APIException("Key 'data' missing from postcode lookup API")
+                raise APIException(
+                    "Key 'data' missing from postcode lookup API")
             for key in ["latitude", "longitude"]:
                 if key not in response["data"]:
-                    raise APIException(f"Key 'data.{key}' missing from postcode lookup API")
-            
+                    raise APIException(
+                        f"Key 'data.{key}' missing from postcode lookup API")
+
             # Pull coordinates from the response.
             radius = int(data["search_radius"])
             lat = float(response["data"]["latitude"])
             lng = float(response["data"]["longitude"])
-            queryset = get_nearby_venues(lat, lng, radius)
+            queryset = queryset.filter(
+                location__distance_lt=(Point(lat, lng), Distance(m=radius)))
 
         # Paginate the results.
         results = Paginator(queryset, data["limit"]).page(data["offset"])
@@ -113,23 +123,3 @@ class VenueApi(APIView):
 
         # Return the results.
         return Response(serializer.data)
-
-def get_nearby_venues(latitude, longitude, radius):
-    """
-    Return venues sorted by distance to specified coordinates
-    whose distance is less than radius away, given in meters.
-    """
-    # Generage the great circle distance formula.
-    gcd_formula = "6371 * acos(least(greatest(\
-    cos(radians(%s)) * cos(radians(latitude)) \
-    * cos(radians(longitude) - radians(%s)) + \
-    sin(radians(%s)) * sin(radians(latitude)) \
-    , -1), 1))"
-    distance_raw_sql = RawSQL(gcd_formula, (latitude, longitude, latitude))
-
-    # Compute the distances against each venue.
-    queryset = Venue.objects.all().annotate(distance=distance_raw_sql).order_by('distance')
-
-    # Filter results by radius.
-    queryset = queryset.filter(distance__lt=radius/1000)
-    return queryset

@@ -16,7 +16,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='BusinessType',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True, serialize=False, verbose_name='ID')),
                 ('label', models.CharField(max_length=100)),
                 ('description', models.CharField(max_length=250)),
             ],
@@ -24,7 +25,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Venue',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True,
+                                        primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=80)),
                 ('description', models.CharField(max_length=250, null=True)),
                 ('address_line_1', models.CharField(max_length=250)),
@@ -33,8 +35,7 @@ class Migration(migrations.Migration):
                 ('city', models.CharField(max_length=250)),
                 ('postcode', models.CharField(max_length=10)),
                 ('country', models.CharField(max_length=250)),
-                ('latitude', models.FloatField()),
-                ('longitude', models.FloatField()),
+                ('location', django.contrib.gis.db.models.fields.PointField(srid=4326)),
                 ('website', models.CharField(max_length=250, null=True)),
                 ('facebook', models.CharField(max_length=250, null=True)),
                 ('twitter', models.CharField(max_length=250, null=True)),
@@ -59,7 +60,8 @@ class Migration(migrations.Migration):
                 ('saturday_close', models.TimeField(null=True)),
                 ('sunday_open', models.TimeField(null=True)),
                 ('sunday_close', models.TimeField(null=True)),
-                ('business_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='venue.BusinessType')),
+                ('business_type', models.ForeignKey(
+                    on_delete=django.db.models.deletion.PROTECT, to='venue.BusinessType')),
             ],
         ),
     ]
