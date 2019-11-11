@@ -63,7 +63,7 @@ def import_csv_data(apps, schema_editor):
                 city=row['CITY'],
                 postcode=row['POSTCODE'],
                 country=row['COUNTRY'],
-                location=Point(float(row['LAT']), float(row['LNG'])),
+                location=Point(float(row['LNG']), float(row['LAT'])),
 
                 phone=row['PHONE_PRIMARY'],
                 email=row['EMAIL_PRIMARY'],
