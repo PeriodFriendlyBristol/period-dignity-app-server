@@ -1,9 +1,6 @@
 '''
 Venue Views Module
 '''
-import requests
-
-from django.db.models.expressions import RawSQL
 from django.core.paginator import Paginator
 
 from django.contrib.gis.db.models.functions import Distance as DistanceMeasure
@@ -14,13 +11,12 @@ from rest_framework.exceptions import APIException, ParseError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import VenueSerializer
-from .forms import GetVenueForm
-from .models import Venue
+from core.functions import postcode_to_coordinates
 
-
-# pylint:disable=no-self-use
-# pylint:disable=no-member
+from venue.serializers import VenueSerializer
+from venue.forms import GetVenueForm
+from venue.models import Venue
+from venue.dao import VenueDAO
 
 
 class VenueApi(APIView):
@@ -77,8 +73,37 @@ class VenueApi(APIView):
         if not form.is_valid():
             raise ParseError(form.errors)
 
-        # Get the radius parameter.
+        # Get the parameters.
         radius = int(data["search_radius"])
+        business_type = data.get("business_type")
+        coordinates = data.get("coordinates")
+        postcode = data.get("postcode")
+
+        # Build filter parameters.
+        parameters = {}
+
+        if business_type:
+            parameters["business_type__label"] = business_type
+            queryset = VenueDAO.find_queryset(parameters)
+        
+        if coordinates:
+            lat, lng = map(float, data["coordinates"].split(","))
+            queryset = query_by_distance(lat, lng, radius, queryset)
+        
+        elif postcode:
+            try:
+                lat, lng = postcode_to_coordinates(postcode)
+            except ValueError as ex:
+                raise ParseError(ex)
+        
+        else:
+            queryset = VenueDAO.find_queryset({})
+
+        # Serialize the results.
+        serializer = VenueSerializer(results, many=True)
+
+        # Return the results.
+        return Response(serializer.data)
 
         # Query for the venues.
         queryset = Venue.objects.all()
@@ -121,6 +146,6 @@ class VenueApi(APIView):
 
 def query_by_distance(lat, lng, radius, queryset):
     point = Point(lng, lat)
-    return queryset.filter(location__distance_lt=(point, Distance(m=radius))) \
+    return queryset.filter(location__distance_lte=(point, Distance(m=radius))) \
                    .annotate(distance=DistanceMeasure("location", point)) \
                    .order_by("distance")

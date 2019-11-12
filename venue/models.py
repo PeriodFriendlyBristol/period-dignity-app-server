@@ -1,7 +1,5 @@
-from django.db import models
 from django.contrib.gis.db import models as geo_models
-
-# Create your models here.
+from django.db import models
 
 
 class BusinessType(models.Model):

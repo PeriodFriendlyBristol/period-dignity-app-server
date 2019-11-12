@@ -1,5 +1,5 @@
-from django.apps import AppConfig
+from core.apps import BaseConfig
 
 
-class VenueConfig(AppConfig):
+class VenueConfig(BaseConfig):
     name = 'venue'
