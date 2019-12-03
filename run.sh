@@ -10,7 +10,12 @@ done
 # Set up the data migrations.
 python3 manage.py makemigrations
 python3 manage.py migrate
+
+# Create the admin user.
 python3 manage.py shell < tools/create_admin.py
+
+# Collect static files.
+python3 manage.py collectstatic
 
 # Run the Django server.
 gunicorn --worker-tmp-dir /dev/shm --workers=2 \

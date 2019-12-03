@@ -10,6 +10,7 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy the project files.
 RUN mkdir /code
+RUN mkdir /code/static
 WORKDIR /code
 COPY . /code
 

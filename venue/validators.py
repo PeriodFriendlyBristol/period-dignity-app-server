@@ -14,7 +14,7 @@ def validate_business_type(value):
 
 def validate_coordinates(value):
     # Ensure there are two values.
-    if not len(value.split(",")) is 2:
+    if len(value.split(",")) != 2:
         raise ValidationError(
             _("Ensure this parameter is a comma-separated latitude & longitude string, e.g. coordinates=51.4545,-2.5879"))
 

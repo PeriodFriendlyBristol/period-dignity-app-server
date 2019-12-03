@@ -17,8 +17,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
-SECRET_KEY = os.getenv('SECRET_KEY', '1#hqm$s5c&2l977vc(9u+@09qc@cvy3th*k4f30y#&vj0+$gxs')
-DEBUG = os.getenv('DEBUG', True)
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '1#hqm$s5c&2l977vc(9u+@09qc@cvy3th*k4f30y#&vj0+$gxs')
+DEBUG = os.getenv('DJANGO_DEBUG', "true").lower() == "true"
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['*']
@@ -39,14 +39,14 @@ INSTALLED_APPS = [
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
+    'corsheaders.middleware.CorsMiddleware'
 ]
 TEMPLATES = [
     {
@@ -89,6 +89,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'}
 ]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
