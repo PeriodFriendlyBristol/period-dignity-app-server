@@ -16,8 +16,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='BusinessType',
             fields=[
-                ('id', models.AutoField(auto_created=True,
-                                        primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('label', models.CharField(max_length=100)),
                 ('description', models.CharField(max_length=250)),
             ],
@@ -25,8 +24,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Venue',
             fields=[
-                ('id', models.AutoField(auto_created=True,
-                                        primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=80)),
                 ('description', models.CharField(max_length=250, null=True)),
                 ('address_line_1', models.CharField(max_length=250)),
@@ -39,9 +37,13 @@ class Migration(migrations.Migration):
                 ('website', models.CharField(max_length=250, null=True)),
                 ('facebook', models.CharField(max_length=250, null=True)),
                 ('twitter', models.CharField(max_length=250, null=True)),
-                ('phone', models.CharField(max_length=15)),
+                ('phone', models.CharField(max_length=16)),
                 ('email', models.CharField(max_length=250)),
                 ('product_location', models.CharField(max_length=500)),
+                ('contact_name', models.CharField(max_length=100)),
+                ('contact_phone', models.CharField(max_length=100)),
+                ('contact_email', models.CharField(max_length=100)),
+                ('show_on_website', models.BooleanField()),
                 ('toilet', models.BooleanField(null=True)),
                 ('stock', models.BooleanField(null=True)),
                 ('wheelchair_access', models.BooleanField(null=True)),

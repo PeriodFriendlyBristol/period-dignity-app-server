@@ -54,7 +54,7 @@ def import_csv_data(apps, schema_editor):
         for row in csv_reader:
             # Parse the opening times into datetime objects.
             venue = Venue.objects.create(
-                name=row['NAME'],
+                name=row['NAME_VENUE'],
 
                 description=row['DESCRIPTION'],
                 address_line_1=row['ADDRESS1'],
@@ -64,21 +64,26 @@ def import_csv_data(apps, schema_editor):
                 postcode=row['POSTCODE'],
                 country=row['COUNTRY'],
                 location=Point(float(row['LNG']), float(row['LAT'])),
+                show_on_website=row['SHOWN_ON_MAP'] == "TRUE",
 
-                phone=row['PHONE_PRIMARY'],
-                email=row['EMAIL_PRIMARY'],
+                phone=row['PHONE_VENUE'],
+                email=row['EMAIL_VENUE'],
                 website=row['WEBSITE'],
                 twitter=row['TWITTER'],
                 facebook=row['FACEBOOK'],
 
+                contact_name=row['NAME_MAIN_CONTACT'],
+                contact_phone=row['PHONE_MAIN_CONTACT'],
+                contact_email=row['EMAIL_MAIN_CONTACT'],
+
+                toilet=row['TOILET'] == 'TRUE',
+                wheelchair_access=row['WHEELCHAIR_ACCESS'] == 'TRUE',
                 business_type=business_type_object_lookup[row['BUSINESS_TYPE']],
-                toilet=row['TOILET'] == 'True',
-                wheelchair_access=row['WHEELCHAIR_ACCESS'] == 'True',
 
                 product_location=row['PRODUCT_LOCATION'],
-                stock=row['STOCK'] == 'True',
+                stock=row['STOCK'] == 'TRUE',
 
-                opening_hours=row['OPENING_HOURS'] == 'True',
+                opening_hours=row['OPENING_HOURS'] == 'TRUE',
                 monday_open=timestr(row['MON_OPEN']),
                 monday_close=timestr(row['MON_CLOSE']),
                 tuesday_open=timestr(row['TUE_OPEN']),

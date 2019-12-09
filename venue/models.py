@@ -17,6 +17,7 @@ class Venue(models.Model):
 
     name = models.CharField(max_length=80)
     description = models.CharField(max_length=250, null=True, blank=True)
+    show_on_website = models.BooleanField()
     address_line_1 = models.CharField(max_length=250)
     address_line_2 = models.CharField(max_length=250, null=True, blank=True)
     address_line_3 = models.CharField(max_length=250, null=True, blank=True)
@@ -29,8 +30,12 @@ class Venue(models.Model):
     facebook = models.CharField(max_length=250, null=True, blank=True)
     twitter = models.CharField(max_length=250, null=True, blank=True)
 
-    phone = models.CharField(max_length=15, null=True, blank=True)
+    phone = models.CharField(max_length=16, null=True, blank=True)
     email = models.CharField(max_length=250, null=True, blank=True)
+
+    contact_name = models.CharField(max_length=100, null=True, blank=True)
+    contact_phone = models.CharField(max_length=100, null=True, blank=True)
+    contact_email = models.CharField(max_length=100, null=True, blank=True)
 
     product_location = models.CharField(max_length=500)
     business_type = models.ForeignKey(BusinessType, on_delete=models.PROTECT)

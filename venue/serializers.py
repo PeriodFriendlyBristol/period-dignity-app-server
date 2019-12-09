@@ -30,4 +30,4 @@ class VenueSerializer(serializers.ModelSerializer):
     location = PointSerializer(read_only=True)
     class Meta:
         model = Venue
-        fields = '__all__'
+        exclude = ['show_on_website']
