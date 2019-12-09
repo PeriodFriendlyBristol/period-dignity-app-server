@@ -15,7 +15,7 @@ python3 manage.py migrate
 python3 manage.py shell < tools/create_admin.py
 
 # Collect static files.
-python3 manage.py collectstatic
+python3 manage.py collectstatic --noinput --clear
 
 # Run the Django server.
 gunicorn --worker-tmp-dir /dev/shm --workers=2 \
