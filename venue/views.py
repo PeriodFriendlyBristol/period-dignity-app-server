@@ -1,8 +1,6 @@
 '''
 Venue Views Module
 '''
-import requests
-
 from django.db.models.expressions import RawSQL
 from django.core.paginator import Paginator
 
@@ -17,6 +15,9 @@ from rest_framework.views import APIView
 from .serializers import VenueSerializer
 from .forms import GetVenueForm
 from .models import Venue
+
+import requests
+import re
 
 
 # pylint:disable=no-self-use
@@ -93,10 +94,23 @@ class VenueApi(APIView):
             queryset = query_by_distance(lat, lng, radius, queryset)
 
         elif "postcode" in data:
-            # Pull postcode from the query and find the coordinates.
-            response = requests.get(f"http://api.getthedata.com/postcode/{data['postcode']}").json()
+            postcode = data["postcode"]
+
+            # Validate the postcode using a government-provided regular expression.
+            if not re.match("([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})", postcode):
+                raise ParseError("Please enter a valid postocde")
+
+            # Query for the coordinates.
+            response = requests.get(f"http://api.getthedata.com/postcode/{postcode}").json()
             if "error" in response:
-                raise ParseError(response["error"])
+                error = response["error"]
+
+                # Handle the API error.
+                if error == "No matching postcode area, postcode district, postcode sector, or unit postcode found." \
+                or error == "No matching postcode found.":
+                    raise ParseError("Please enter a valid postcode")
+                else:
+                    raise APIException(error)
 
             # Ensure the response has the necessary data.
             if "data" not in response:
