@@ -24,6 +24,11 @@ import re
 # pylint:disable=no-member
 
 
+# Define defaults for when a query returns no results.
+# These coordinates are the centre of Bristol, with a 50km radius.
+DEFAULT_LAT, DEFAULT_LNG, DEFAULT_RADIUS = 51.4545, -2.5879, 50000
+
+
 class VenueApi(APIView):
     '''
     Available query parameters:
@@ -39,9 +44,9 @@ class VenueApi(APIView):
     Example: offset=5
 
     search_radius: int
-    (default 5000)
+    (default 1000)
     Distance, in meters, from a provided location in which to search for venues. Use in combination with the coordinates or postcode parameter.
-    Example: search_radius=1000
+    Example: search_radius=5000
 
     coordinates: str
     A string containing latitude & longitude - in that order.
@@ -123,6 +128,14 @@ class VenueApi(APIView):
             lat = float(response["data"]["latitude"])
             lng = float(response["data"]["longitude"])
             queryset = query_by_distance(lat, lng, radius, queryset)
+        
+        # Ensure there are results to display on the website,
+        # even if the filters (e.g. location, distance) have removed any matches.
+        found_venues = len(queryset) > 0
+        if not found_venues:
+            queryset = query_by_distance(
+                DEFAULT_LAT, DEFAULT_LNG, DEFAULT_RADIUS, 
+                Venue.objects.filter(show_on_website=True))
 
         # Paginate the results.
         results = Paginator(queryset, data["limit"]).page(data["offset"])
@@ -131,6 +144,7 @@ class VenueApi(APIView):
         serializer = VenueSerializer(results, many=True)
 
         # Return the results.
+        # return Response({"found_venues": found_venues, "venues": serializer.data})
         return Response(serializer.data)
 
 def query_by_distance(lat, lng, radius, queryset):
