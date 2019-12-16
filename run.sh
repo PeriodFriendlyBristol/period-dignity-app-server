@@ -1,21 +1,23 @@
+# Ensure the container stops if an error occurs.
 set -e
 
-I=0
-while ! nc -z postgres-server 5432; do
-  sleep 1 # wait for ostara-db port to be open
-  I=$((I+1))
-  if [ $I == 300 ]
-  then
-      echo "ostara db port 5432 still not open after 5min EXITING"
-      exit 1
-  fi
+# Wait for the database to come online.
+while ! nc -z ${DATABASE_HOST} ${DATABASE_PORT}; do 
+    echo "Waiting for DB at '${DATABASE_HOST}:${DATABASE_PORT}'"
+    sleep 1
 done
 
+# Set up the data migrations.
 python3 manage.py makemigrations
-
 python3 manage.py migrate
 
-# TODO admin user must be made manually in production
+# Create the admin user.
 python3 manage.py shell < tools/create_admin.py
 
-python3 manage.py runserver 0.0.0.0:8000
+# Collect static files.
+python3 manage.py collectstatic --noinput --clear
+
+# Run the Django server.
+gunicorn --worker-tmp-dir /dev/shm --workers=2 \
+         --threads=4 --worker-class=gthread \
+         --bind :${DJANGO_PORT} period_dignity.wsgi

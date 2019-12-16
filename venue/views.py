@@ -82,7 +82,7 @@ class VenueApi(APIView):
         radius = int(data["search_radius"])
 
         # Query for the venues.
-        queryset = Venue.objects.all()
+        queryset = Venue.objects.filter(show_on_website=True)
 
         # Filter the results.
         if "business_type" in data:
